@@ -18,6 +18,14 @@
  * the org size limit for all Apex scripts.
  *
  * See the Apex Language Reference for more information about Testing and Code Coverage.
+ * 
+ */
+/***
+ * @description: This class contains unit tests for validating the behavior of Case Triggers.
+ * @Author: Krure 
+ * @Creation: 13/01/2026
+ * @LastUpdate: 14/06/2023
+ * 
  */
 @IsTest
 private class CaseTriggerHandlerTest {
@@ -61,4 +69,25 @@ private class CaseTriggerHandlerTest {
         }
         Test.stopTest();
     }
+
+    /*
+    @MethodName: shouldSyncCase
+    @Description: This method tests the integration of the Case Trigger Handler with the Integration Service.
+    @Author:Krure
+    */
+    @IsTest
+    static void shouldSyncCase() {
+        Case c = new Case(
+            Subject = 'Test Case',
+            Status = 'New'
+        );
+        insert c;
+        //We will only test the successful scenario for now
+        Test.startTest();
+        update c;
+        Test.stopTest();
+        
+        System.Assert.areEqual(c, [SELECT Id,Status,Subject FROM Case WHERE Id = :c.Id]);
+    }
+
 }
