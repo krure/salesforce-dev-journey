@@ -49,15 +49,47 @@ public class CaseService {
         List<Case> newCases,
         Map<Id, Case> oldMap
     ) {
+        //Simple field validations can be managed using Validation Rules, However we will implement a use case where we will combine it with related record logic to justify Apex use
+        //To allow this  logic to scalate correctly for mass DML operations we will use a query to search for related records first
+        //Query for the tasks related to the cases being updated.
+        //We will only query the task that are not completed, as we will only allow the status change if there is at least one open task
+        List<Task> tasks = [
+            SELECT Id, Status,WhatId
+            FROM Task
+            WHERE WhatId IN :newCases
+            AND ( NOT (Status = 'Completed' ))
+        ];
+        
+        //Create a map to store the related tasks for each case
+        Map<Id, List<Task>> caseTasksMap = new Map<Id, List<Task>>();
+
+        //Populate the map with the related tasks for each case
+        for (Task t : tasks) {
+            if (!caseTasksMap.containsKey(t.WhatId)) {
+                caseTasksMap.put(t.WhatId, new List<Task>());
+            }
+            caseTasksMap.get(t.WhatId).add(t);
+        }
+
         for (Case c : newCases) {
             Case oldCase = oldMap.get(c.Id);
-
+            //Check for status change from closed to open
+            system.debug('Oldcase: '+oldCase.Status );
+            system.debug('NewCase'+c.Status);
             if (oldCase != null &&
                 oldCase.Status == 'Closed' &&
                 c.Status != 'Closed'
             ) {
-                c.addError('Closed cases cannot be reopened.');
+                system.debug('From closed to open case');
+                //If a case exists in the map, it means there are open tasks for this case, allowing the status change, else an error pops up
+                if (caseTasksMap.containsKey(c.Id)) {
+                    
+                } else {
+                        c.addError('The case cannot be reopened as there are no open tasks');
+                }
             }
+        
+       
         }
     }
 }
