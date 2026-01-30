@@ -1,7 +1,8 @@
-import { LightningElement } from 'lwc';
+import { LightningElement,api } from 'lwc';
 import createCase from '@salesforce/apex/CasePortalController.createCase';
 
 export default class CaseCreateForm extends LightningElement {
+    @api title = 'Create Case';
     subject;
     description;
     priority = 'Medium';
@@ -31,7 +32,18 @@ export default class CaseCreateForm extends LightningElement {
                 description: this.description,
                 priority: this.priority
             });
-            // success handling (toast luego)
+            //Success
+            console.log('Case created successfully');
+            //Insert case into database with the createCase
+            
+            //Toast to notify Case creation
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Success',
+                    message: 'Case created successfully',
+                    variant: 'success',
+                }),
+            );
         } catch (error) {
             // error handling
             console.error(error);
