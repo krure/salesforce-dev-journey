@@ -5,9 +5,9 @@ export default class CaseList extends LightningElement {
     //title property
     @api title = 'My Cases';
     columns = [
-        { label: 'Case Number', fieldName: 'CaseNumber' },
-        { label: 'Subject', fieldName: 'Subject' },
-        { label: 'Status', fieldName: 'Status' },
+        { label: 'Case Number', fieldName: 'CaseNumber', type: 'text' },
+        { label: 'Subject', fieldName: 'Subject' , type: 'text' },
+        { label: 'Status', fieldName: 'Status' , type: 'text'},
         { label: 'Created Date', fieldName: 'CreatedDate', type: 'date' }
     ];
     @wire(getMyCases)
