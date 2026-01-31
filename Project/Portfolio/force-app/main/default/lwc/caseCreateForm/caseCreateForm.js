@@ -1,11 +1,28 @@
+/*
+ * Author: Krure
+ * CreatedDate: 28/01/26
+ * LastModifiedDate: 30/01/26
+ * Description: Case creation LWC
+ *
+*/
+
+
 import { LightningElement,api } from 'lwc';
 import createCase from '@salesforce/apex/CasePortalController.createCase';
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { NavigationMixin } from 'lightning/navigation';
+import { publish, MessageContext } from 'lightning/messageService';
+import CASE_CHANNEL from '@salesforce/messageChannel/CaseMessageChannel__c';
+import { wire } from 'lwc';
+
 export default class CaseCreateForm extends LightningElement {
     @api title = 'Create Case';
     subject;
     description;
+    @wire(MessageContext)
+messageContext;
+
+
     priority = 'Medium';
 
     priorityOptions = [
@@ -51,9 +68,10 @@ export default class CaseCreateForm extends LightningElement {
                     variant: 'success',
                 })
             );
-            this.dispatchEvent(
-                new CustomEvent('casecreated')  
-            );
+          publish(this.messageContext, CASE_CHANNEL, {
+            caseId: caseId
+            });
+
 
         } catch (error) {
             this.dispatchEvent(
