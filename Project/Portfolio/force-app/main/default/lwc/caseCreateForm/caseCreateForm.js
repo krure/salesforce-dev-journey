@@ -1,6 +1,7 @@
 import { LightningElement,api } from 'lwc';
 import createCase from '@salesforce/apex/CasePortalController.createCase';
-
+import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import { NavigationMixin } from 'lightning/navigation';
 export default class CaseCreateForm extends LightningElement {
     @api title = 'Create Case';
     subject;
@@ -27,7 +28,7 @@ export default class CaseCreateForm extends LightningElement {
 
     async handleSubmit() {
         try {
-            await createCase({
+            const caseId = await createCase({
                 subject: this.subject,
                 description: this.description,
                 priority: this.priority
@@ -40,11 +41,30 @@ export default class CaseCreateForm extends LightningElement {
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: 'Success',
-                    message: 'Case created successfully',
+                    message: 'Case created successfully: {0}',
+                    messageData: [
+                    {
+                        url: `/s/detail/${caseId}`,
+                        label: caseId
+                    }
+                    ],  
                     variant: 'success',
-                }),
+                })
             );
+            this.dispatchEvent(
+                new CustomEvent('casecreated')  
+            );
+
         } catch (error) {
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error',
+                    message: 'Case failed to be created: ' + error.body.pageErrors[0].message,
+                    messageData: error.body.pageErrors[0].message,
+                    mode: 'sticky',
+                    variant: 'error'
+                })
+            );
             // error handling
             console.error(error);
         }
