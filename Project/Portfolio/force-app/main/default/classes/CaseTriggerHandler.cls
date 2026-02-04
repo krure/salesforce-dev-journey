@@ -19,11 +19,23 @@ public class CaseTriggerHandler {
         CaseService.validateStatusChange(newCases, oldMap);
     }
 
-    public static void afterInsert(List<Case> newCases) {
-        IntegrationService.syncCases(newCases);
+   public static void afterInsert(List<Case> newCases) {
+
+    List<Id> caseIds = new List<Id>();
+    for (Case c : newCases) {
+        caseIds.add(c.Id);
     }
 
+    System.enqueueJob(new CaseIntegrationQueueable(caseIds));
+    }
+
+
     public static void afterUpdate(List<Case> newCases, Map<Id, Case> oldMap) {
-        IntegrationService.syncCases(newCases);
+        List<Id> caseIds = new List<Id>();
+    for (Case c : newCases) {
+        caseIds.add(c.Id);
+    }
+
+    System.enqueueJob(new CaseIntegrationQueueable(caseIds));
     }
 }
