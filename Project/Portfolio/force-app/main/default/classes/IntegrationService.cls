@@ -8,7 +8,7 @@
 public class IntegrationService {
 
     public static void syncCases(List<Case> casesToSync) {
-
+        list<Case> casesToUpdate = new list<Case>();
         Http http = new Http();
 
         for (Case c : casesToSync) {
@@ -32,8 +32,13 @@ public class IntegrationService {
 
                 if (res.getStatusCode() == 201) {
                     System.debug('Integration success: ' + res.getBody());
+                    c.Integration_Status__c = 'Success';
+                    casesToUpdate.add(c);
                 } else {
                     System.debug('Integration failed: ' + res.getStatus());
+                    c.Integration_Status__c = 'Failed';
+                    c.Last_Integration_Error__c='Error: ' + res.getStatus()+' '+res.getBody();
+                    casesToUpdate.add(c);
                 }
 
             } catch (Exception e) {
@@ -41,6 +46,7 @@ public class IntegrationService {
                 System.debug('Callout error: ' + e.getMessage());
             }
         }
+        update casesToUpdate;
     }
 }
     
