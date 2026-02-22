@@ -15,7 +15,7 @@ public with sharing class CasePortalController {
     @AuraEnabled(cacheable=true)
     public static List<Case> getMyCases() {
         return [
-            SELECT Id, CaseNumber, Subject, Status, CreatedDate
+            SELECT Id, CaseNumber, Subject, Status, CreatedDate, Priority,Integration_Status__c, Last_Integration_Error__c
             FROM Case
             WHERE CreatedById = :UserInfo.getUserId()
             ORDER BY CreatedDate DESC
