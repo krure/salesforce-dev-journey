@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Source_Class__c</fullName>
+    <label>Source Class</label>
+    <description>The Apex class name where the error occurred for tracking and debugging</description>
+    <inlineHelpText>Enter the fully qualified Apex class name (e.g., IntegrationService, CaseIntegrationQueueable)</inlineHelpText>
+    <type>Text</type>
+    <length>255</length>
+    <required>false</required>
+</CustomField>

@@ -48,15 +48,22 @@ public class IntegrationService {
                     c.External_Id__c= ResponseObj.id;
                     casesToUpdate.add(c);
                 } else {
-                    System.debug('Integration failed: ' + res.getStatus());
+                    // Log integration error with full HTTP context
+                    ErrorLogService.logIntegrationError(
+                        res, 
+                        'callout:Case_Integration/posts', 
+                        JSON.serialize(payload), 
+                        'IntegrationService', 
+                        'syncCases'
+                    );
                     c.Integration_Status__c = 'Failed';
                     c.Last_Integration_Error__c='Integration Error: ' + res.getStatus()+' '+res.getBody();
                     casesToUpdate.add(c);
                 }
 
             } catch (Exception e) {
-                //Future Log creation logic here
-                System.debug('Callout error: ' + e.getMessage());
+                // Log error using Error Logging Framework
+                ErrorLogService.logException(e, 'IntegrationService', 'syncCases', c.Id, 'High');
                 c.Last_Integration_Error__c='Callout Error: '+e.getMessage();
                 casesToUpdate.add(c);
             }
@@ -65,10 +72,16 @@ public class IntegrationService {
              update casesToUpdate;
            
            
-        }catch(DmlException DException){
-            system.debug('DML Exception: '+DException.getMessage());
-            //Rethrow for now , we will handle this in a future error log custom object
-            throw DException;
+        }catch(DmlException dmlEx){
+            // Log DML error with Error Logging Framework
+            List<Id> caseIds = new List<Id>();
+            for (Case c : casesToUpdate) {
+                if (c.Id != null) {
+                    caseIds.add(c.Id);
+                }
+            }
+            ErrorLogService.logDmlError(dmlEx, caseIds, 'IntegrationService', 'syncCases');
+            throw dmlEx;
         }
         
     }
