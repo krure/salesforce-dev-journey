@@ -22,3 +22,6 @@ Featuring (MVPs):
       - THP (Trigger Handler Pattern)
       - Testing (LWC and Apex test classes)
       - Named credentials
+- AI Assistance : 
+ This project used AI-assisted tools to support research, prototyping, documentation, and development acceleration.
+Architecture decisions, business logic, integrations, debugging, and final validations were designed and reviewed manually.
