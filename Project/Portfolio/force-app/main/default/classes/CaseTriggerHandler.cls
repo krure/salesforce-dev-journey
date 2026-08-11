@@ -21,21 +21,31 @@ public class CaseTriggerHandler {
 
    public static void afterInsert(List<Case> newCases) {
 
-    List<Id> caseIds = new List<Id>();
-    for (Case c : newCases) {
-        caseIds.add(c.Id);
-    }
+        List<Id> caseIdsToSync = new List<Id>();
 
-    System.enqueueJob(new CaseIntegrationQueueable(caseIds));
-    }
+        for(Case c : newCases) {
+            if(c.Integration_Status__c == 'Pending') {
+                caseIdsToSync.add(c.Id);
+            }
+        }
+
+        if(!caseIdsToSync.isEmpty()) {
+            System.enqueueJob(new CaseIntegrationQueueable(caseIdsToSync));
+        }
+}
 
 
     public static void afterUpdate(List<Case> newCases, Map<Id, Case> oldMap) {
-        List<Id> caseIds = new List<Id>();
-    for (Case c : newCases) {
-        caseIds.add(c.Id);
-    }
+      List<Id> caseIdsToSync = new List<Id>();
 
-    System.enqueueJob(new CaseIntegrationQueueable(caseIds));
+        for(Case c : newCases) {
+            if(c.Integration_Status__c == 'Pending') {
+               caseIdsToSync.add(c.Id);
+            }
+        }
+
+        if(!caseIdsToSync.isEmpty()) {
+         System.enqueueJob(new CaseIntegrationQueueable(caseIdsToSync));
+        }
     }
 }

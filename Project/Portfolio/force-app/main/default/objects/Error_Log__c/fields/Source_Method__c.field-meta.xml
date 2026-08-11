@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Source_Method__c</fullName>
+    <label>Source Method</label>
+    <description>The method name within the class where the error occurred</description>
+    <inlineHelpText>Enter the method name where the error was caught (e.g., syncCases, execute, handleAfterInsert)</inlineHelpText>
+    <type>Text</type>
+    <length>255</length>
+    <required>false</required>
+</CustomField>

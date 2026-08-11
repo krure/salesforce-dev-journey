@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Error Log</label>
+    <pluralLabel>Error Logs</pluralLabel>
+    <description>Object used to track and manage system errors, integration failures, and exceptions within the organization for debugging and observability purposes.</description>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <sharingModel>ReadWrite</sharingModel>
+    <visibility>Public</visibility>
+    <nameField>
+        <label>Error Log Number</label>
+        <type>AutoNumber</type>
+        <displayFormat>ERR-{00000}</displayFormat>
+        <startingNumber>1</startingNumber>
+    </nameField>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <enableHistory>true</enableHistory>
+</CustomObject>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Resolution_Notes__c</fullName>
+    <label>Resolution Notes</label>
+    <description>Detailed notes on how the error was resolved or root cause analysis</description>
+    <inlineHelpText>Document the resolution steps, root cause, and any preventive measures taken</inlineHelpText>
+    <type>LongTextArea</type>
+    <length>32768</length>
+    <visibleLines>5</visibleLines>
+    <required>false</required>
+</CustomField>
