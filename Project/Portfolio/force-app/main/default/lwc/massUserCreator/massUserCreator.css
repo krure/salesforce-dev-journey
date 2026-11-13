@@ -1,0 +1,84 @@
+.config-bar {
+    padding: 0.75rem 1rem;
+    background: #f4f6f9;
+    border-radius: 4px;
+    border: 1px solid #e0e0df;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.count-input {
+    max-width: 8rem;
+}
+
+.user-table {
+    table-layout: fixed;
+    width: 100%;
+    min-width: 70rem;
+}
+
+.user-table thead th {
+    background-color: #f4f6f9;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.6rem 0.5rem;
+}
+
+.col-num {
+    width: 3rem;
+    text-align: center;
+}
+.col-name {
+    width: 11%;
+}
+.col-email {
+    width: 16%;
+}
+.col-role {
+    width: 14%;
+}
+.col-profile {
+    width: 14%;
+}
+.col-permsets {
+    width: 26%;
+}
+.col-action {
+    width: 3rem;
+    text-align: center;
+}
+
+.user-table tbody tr:nth-child(even) {
+    background-color: #fafaf9;
+}
+.user-table tbody td {
+    padding: 0.5rem 0.4rem;
+    vertical-align: top;
+}
+
+.row-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: #e8f0fe;
+    color: #0176d3;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+abbr.required {
+    color: #c23934;
+    text-decoration: none;
+    cursor: default;
+}
+
+.slds-progress-bar {
+    flex: 1;
+}

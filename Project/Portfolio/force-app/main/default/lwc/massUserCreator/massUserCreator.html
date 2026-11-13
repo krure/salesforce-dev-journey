@@ -1,0 +1,268 @@
+<template>
+    <div class="slds-card">
+        <div class="slds-card__header slds-grid slds-grid_align-spread">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <lightning-icon icon-name="standard:user" size="small"></lightning-icon>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title slds-text-heading_small">
+                        Creación masiva de usuarios
+                    </h2>
+                </div>
+            </header>
+        </div>
+
+        <div class="slds-card__body slds-card__body_inner">
+            <template if:true={hasErrors}>
+                <div
+                    class="slds-notify slds-notify_alert slds-alert_error slds-m-bottom_medium"
+                    role="alert"
+                >
+                    <span>{globalErrorMessage}</span>
+                </div>
+            </template>
+
+            <template if:true={hasSuccess}>
+                <div
+                    class="slds-notify slds-notify_alert slds-alert_success slds-m-bottom_medium"
+                    role="status"
+                >
+                    <span>{successMessage}</span>
+                </div>
+            </template>
+
+            <!-- Barra de configuración -->
+            <div
+                class="slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-m-bottom_medium config-bar"
+            >
+                <div class="slds-grid slds-grid_vertical-align-center slds-col">
+                    <lightning-input
+                        type="number"
+                        label="Cantidad de usuarios"
+                        variant="label-inline"
+                        min="1"
+                        max="50"
+                        value={userCount}
+                        onchange={handleCountChange}
+                        class="slds-m-right_small count-input"
+                    >
+                    </lightning-input>
+                    <span class="slds-text-color_weak slds-text-body_small">máx. 50</span>
+                </div>
+
+                <div class="slds-col slds-size_4-of-12 slds-p-horizontal_medium">
+                    <div class="slds-grid slds-grid_vertical-align-center">
+                        <span
+                            class="slds-text-body_small slds-text-color_weak slds-m-right_small nowrap"
+                        >
+                            {completedCount}/{totalCount} completos
+                        </span>
+                        <div
+                            class="slds-progress-bar slds-progress-bar_x-small"
+                            role="progressbar"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
+                            aria-valuenow={progressPercent}
+                        >
+                            <span class="slds-progress-bar__value" style={progressStyle}></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="slds-grid slds-grid_vertical-align-center slds-col slds-grid_align-end">
+                    <lightning-button
+                        label="Añadir fila"
+                        icon-name="utility:add"
+                        variant="neutral"
+                        onclick={handleAddRow}
+                        class="slds-m-right_small"
+                        disabled={isLoading}
+                    >
+                    </lightning-button>
+                    <lightning-button
+                        label={submitLabel}
+                        icon-name="utility:adduser"
+                        variant="brand"
+                        onclick={handleSubmit}
+                        disabled={isLoading}
+                    >
+                    </lightning-button>
+                </div>
+            </div>
+
+            <!-- Tabla -->
+            <div class="slds-scrollable_x">
+                <table
+                    class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_fixed-layout user-table"
+                >
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th scope="col" class="col-num">#</th>
+                            <th scope="col" class="col-name">
+                                Nombre <abbr title="requerido" class="required">*</abbr>
+                            </th>
+                            <th scope="col" class="col-name">
+                                Apellido <abbr title="requerido" class="required">*</abbr>
+                            </th>
+                            <th scope="col" class="col-email">
+                                Correo electrónico <abbr title="requerido" class="required">*</abbr>
+                            </th>
+                            <th scope="col" class="col-role">Rol</th>
+                            <th scope="col" class="col-profile">
+                                Perfil <abbr title="requerido" class="required">*</abbr>
+                            </th>
+                            <th scope="col" class="col-permsets">Conjuntos de permisos</th>
+                            <th scope="col" class="col-action"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={displayRows} for:item="row">
+                            <tr key={row.id} class="slds-hint-parent">
+                                <td class="col-num"><span class="row-badge">{row.index}</span></td>
+
+                                <td class="col-name">
+                                    <lightning-input
+                                        type="text"
+                                        label="Nombre"
+                                        variant="label-hidden"
+                                        placeholder="Nombre"
+                                        value={row.firstName}
+                                        data-id={row.id}
+                                        data-field="firstName"
+                                        onchange={handleFieldChange}
+                                        class={row.firstNameClass}
+                                    >
+                                    </lightning-input>
+                                    <template if:true={row.errors.firstName}>
+                                        <div class="slds-text-color_error slds-text-body_small">
+                                            {row.errors.firstName}
+                                        </div>
+                                    </template>
+                                </td>
+
+                                <td class="col-name">
+                                    <lightning-input
+                                        type="text"
+                                        label="Apellido"
+                                        variant="label-hidden"
+                                        placeholder="Apellido"
+                                        value={row.lastName}
+                                        data-id={row.id}
+                                        data-field="lastName"
+                                        onchange={handleFieldChange}
+                                        class={row.lastNameClass}
+                                    >
+                                    </lightning-input>
+                                    <template if:true={row.errors.lastName}>
+                                        <div class="slds-text-color_error slds-text-body_small">
+                                            {row.errors.lastName}
+                                        </div>
+                                    </template>
+                                </td>
+
+                                <td class="col-email">
+                                    <lightning-input
+                                        type="email"
+                                        label="Correo"
+                                        variant="label-hidden"
+                                        placeholder="correo@empresa.com"
+                                        value={row.email}
+                                        data-id={row.id}
+                                        data-field="email"
+                                        onchange={handleFieldChange}
+                                        class={row.emailClass}
+                                    >
+                                    </lightning-input>
+                                    <template if:true={row.errors.email}>
+                                        <div class="slds-text-color_error slds-text-body_small">
+                                            {row.errors.email}
+                                        </div>
+                                    </template>
+                                </td>
+
+                                <td class="col-role">
+                                    <lightning-combobox
+                                        label="Rol"
+                                        variant="label-hidden"
+                                        placeholder="Rol..."
+                                        options={roleOptions}
+                                        value={row.roleId}
+                                        data-id={row.id}
+                                        data-field="roleId"
+                                        onchange={handleFieldChange}
+                                    >
+                                    </lightning-combobox>
+                                </td>
+
+                                <td class="col-profile">
+                                    <lightning-combobox
+                                        label="Perfil"
+                                        variant="label-hidden"
+                                        placeholder="Perfil..."
+                                        options={profileOptions}
+                                        value={row.profileId}
+                                        data-id={row.id}
+                                        data-field="profileId"
+                                        onchange={handleFieldChange}
+                                        class={row.profileClass}
+                                    >
+                                    </lightning-combobox>
+                                    <template if:true={row.errors.profileId}>
+                                        <div class="slds-text-color_error slds-text-body_small">
+                                            {row.errors.profileId}
+                                        </div>
+                                    </template>
+                                </td>
+
+                                <td class="col-permsets">
+                                    <lightning-dual-listbox
+                                        label="Conjuntos de permisos"
+                                        variant="label-hidden"
+                                        source-label="Disponibles"
+                                        selected-label="Asignados"
+                                        options={permSetOptions}
+                                        value={row.permissionSetIds}
+                                        data-id={row.id}
+                                        data-field="permissionSetIds"
+                                        onchange={handleFieldChange}
+                                        size="4"
+                                    >
+                                    </lightning-dual-listbox>
+                                </td>
+
+                                <td class="col-action">
+                                    <lightning-button-icon
+                                        icon-name="utility:delete"
+                                        variant="bare"
+                                        alternative-text="Eliminar fila"
+                                        title="Eliminar fila"
+                                        data-id={row.id}
+                                        onclick={handleRemoveRow}
+                                        disabled={isSingleRow}
+                                    >
+                                    </lightning-button-icon>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="slds-grid slds-grid_align-spread slds-m-top_small">
+                <span class="slds-text-body_small slds-text-color_weak">
+                    Los campos con <abbr title="requerido" class="required">*</abbr> son
+                    obligatorios · El nombre de usuario se generará a partir del correo electrónico
+                </span>
+                <span class="slds-text-body_small slds-text-color_weak">{totalCount} fila(s)</span>
+            </div>
+        </div>
+
+        <template if:true={isLoading}>
+            <lightning-spinner
+                alternative-text="Creando usuarios..."
+                size="medium"
+            ></lightning-spinner>
+        </template>
+    </div>
+</template>
