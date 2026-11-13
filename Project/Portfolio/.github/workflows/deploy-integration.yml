@@ -1,0 +1,42 @@
+name: Deploy to Integration
+
+# Cada merge a develop se despliega (solo el delta) al sandbox de integración.
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch: # Ejecución manual = despliegue completo
+
+concurrency:
+  group: deploy-integration
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Desplegar a sandbox de integración
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    # Secretos del sandbox, definidos en Settings > Environments > integration
+    environment: integration
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # sfdx-git-delta necesita el historial
+
+      - uses: ./.github/actions/setup-sf
+
+      - name: Login al sandbox
+        uses: ./.github/actions/sf-login
+        with:
+          consumer-key: ${{ secrets.SF_CONSUMER_KEY }}
+          username: ${{ secrets.SF_USERNAME }}
+          jwt-key: ${{ secrets.SF_JWT_KEY }}
+          instance-url: ${{ vars.SF_INSTANCE_URL || 'https://test.salesforce.com' }}
+          alias: integration
+
+      - name: Desplegar
+        run: |
+          chmod +x scripts/ci/deploy-delta.sh
+          ./scripts/ci/deploy-delta.sh integration NoTestRun "${{ github.event_name == 'push' && github.event.before || '' }}"
