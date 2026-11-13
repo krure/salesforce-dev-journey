@@ -1,0 +1,43 @@
+name: Deploy to Production
+
+# Cada merge a main se despliega a producción tras la aprobación manual
+# configurada en el environment "production" (Required reviewers).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # Ejecución manual = despliegue completo
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Desplegar a producción
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-sf
+
+      - name: Login a producción
+        uses: ./.github/actions/sf-login
+        with:
+          consumer-key: ${{ secrets.SF_CONSUMER_KEY }}
+          username: ${{ secrets.SF_USERNAME }}
+          jwt-key: ${{ secrets.SF_JWT_KEY }}
+          instance-url: ${{ vars.SF_INSTANCE_URL || 'https://login.salesforce.com' }}
+          alias: production
+
+      # Producción exige pruebas locales y mínimo 75 % de cobertura.
+      - name: Desplegar
+        run: |
+          chmod +x scripts/ci/deploy-delta.sh
+          ./scripts/ci/deploy-delta.sh production RunLocalTests "${{ github.event_name == 'push' && github.event.before || '' }}"

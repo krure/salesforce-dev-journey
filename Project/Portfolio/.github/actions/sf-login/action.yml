@@ -1,0 +1,55 @@
+name: Login a Salesforce con JWT
+description: Autentica una org (Dev Hub, sandbox o producción) usando el flujo JWT Bearer.
+
+inputs:
+  consumer-key:
+    description: Consumer Key de la Connected App
+    required: true
+  username:
+    description: Usuario de la org
+    required: true
+  jwt-key:
+    description: Contenido de la llave privada (server.key)
+    required: true
+  instance-url:
+    description: https://login.salesforce.com (producción/Dev Hub) o https://test.salesforce.com (sandbox)
+    required: true
+  alias:
+    description: Alias con el que se guardará la org en el CLI
+    required: true
+  set-default-dev-hub:
+    description: Marcar esta org como Dev Hub por defecto
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+  steps:
+    - name: Login JWT
+      shell: bash
+      env:
+        SF_CONSUMER_KEY: ${{ inputs.consumer-key }}
+        SF_USERNAME: ${{ inputs.username }}
+        SF_JWT_KEY: ${{ inputs.jwt-key }}
+        SF_INSTANCE_URL: ${{ inputs.instance-url }}
+        SF_ALIAS: ${{ inputs.alias }}
+        SET_DEV_HUB: ${{ inputs.set-default-dev-hub }}
+      run: |
+        set -euo pipefail
+        KEY_FILE="$(mktemp)"
+        trap 'rm -f "$KEY_FILE"' EXIT
+        printf '%s\n' "$SF_JWT_KEY" > "$KEY_FILE"
+        chmod 600 "$KEY_FILE"
+
+        EXTRA=()
+        if [ "$SET_DEV_HUB" = "true" ]; then
+          EXTRA+=(--set-default-dev-hub)
+        fi
+
+        sf org login jwt \
+          --client-id "$SF_CONSUMER_KEY" \
+          --jwt-key-file "$KEY_FILE" \
+          --username "$SF_USERNAME" \
+          --instance-url "$SF_INSTANCE_URL" \
+          --alias "$SF_ALIAS" \
+          "${EXTRA[@]}"

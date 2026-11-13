@@ -15,7 +15,7 @@ import { publish, MessageContext } from 'lightning/messageService';
 import CASE_CHANNEL from '@salesforce/messageChannel/CaseMessageChannel__c';
 import { wire } from 'lwc';
 
-export default class CaseCreateForm extends LightningElement {
+export default class CaseCreateForm extends NavigationMixin(LightningElement) {
     @api title = 'Create Case';
     subject;
     description;
@@ -51,23 +51,41 @@ messageContext;
                 priority: this.priority
             });
             //Success
-            console.log('Case created successfully');
-            //Insert case into database with the createCase
-            
-            //Toast to notify Case creation
-            this.dispatchEvent(
-                new ShowToastEvent({
-                    title: 'Success',
-                    message: 'Case created successfully: {0}',
-                    messageData: [
-                    {
-                        url: `/s/detail/${caseId}`,
-                        label: caseId
-                    }
-                    ],  
-                    variant: 'success',
+            console.log('Case created successfully : '+caseId);
+            //Create new record page reference
+            const pageRef = {
+                type: "standard__recordPage",
+                attributes: {
+                    recordId: `${caseId}`,
+                    actionName: "view"
+                }
+            };
+            var recordUrl;
+            this[NavigationMixin.GenerateUrl](pageRef)
+            .then(url => {
+                 console.log('Generated URL:', url);
+                 recordUrl=url; 
+                 // Optionally navigate this[NavigationMixin.Navigate](pageReference);
+                  console.log('Generated URL2:', recordUrl);
+                    this.dispatchEvent(
+                        new ShowToastEvent({
+                            title: 'Success',
+                            message: 'Case created successfully: {0}',
+                            messageData: [
+                            {
+                                url: `${recordUrl}`,
+                                label: caseId
+                            }
+                            ],  
+                            variant: 'success',
+                        })
+                );
                 })
-            );
+            .catch(error => { 
+                console.error('Error generating URL:', error);
+            });
+            //Toast to notify Case creation
+            
           publish(this.messageContext, CASE_CHANNEL, {
             caseId: caseId
             });

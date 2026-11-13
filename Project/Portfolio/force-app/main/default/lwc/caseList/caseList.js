@@ -11,8 +11,12 @@ import { refreshApex } from '@salesforce/apex';
 import getMyCases from '@salesforce/apex/CasePortalController.getMyCases';
 import { subscribe, MessageContext,unsubscribe } from 'lightning/messageService';
 import CASE_CHANNEL from '@salesforce/messageChannel/CaseMessageChannel__c';
+//To navigate to the available Case records
+import { NavigationMixin } from 'lightning/navigation';
 
-export default class CaseList extends LightningElement {
+
+
+export default class CaseList extends NavigationMixin(LightningElement) {
    //For communication between deattached LWC (Siblings; CaseList and caseCreateForm)
     @wire(MessageContext)
     messageContext;
@@ -28,16 +32,38 @@ export default class CaseList extends LightningElement {
     cases;
     wiredCaseResult;
     columns = [
-        { label: 'Case Number', fieldName: 'CaseNumber', type: 'text' },
+        { label: 'Case Number', fieldName: 'CaseLink', type: 'url' , typeAttributes: { label: { fieldName: 'CaseNumber' }, target: '_blank' } },
         { label: 'Subject', fieldName: 'Subject' , type: 'text' },
         { label: 'Status', fieldName: 'Status' , type: 'text'},
-        { label: 'Created Date', fieldName: 'CreatedDate', type: 'date' }
+        { label: 'Created Date', fieldName: 'CreatedDate', type: 'date' },
+        { label: 'Priority', fieldName: 'Priority' , type: 'text'},
+        { label: 'Integration Status', fieldName: 'integration_status__c' , type: 'text'},
+        { label: 'Last Integration Error', fieldName: 'Last_Integration_Error__c' , type: 'text'}
     ];
     @wire(getMyCases)
-    wiredCases(result) {
-        this.wiredCaseResult = result;
-        if (result.data) {
-            this.cases = result.data;
+    wiredCases({data,error}) {
+        this.wiredCaseResult = {data,error};
+        if (data) {
+            // Generate record URLs for each contact
+            Promise.all(
+                data.map(record =>
+                    this[NavigationMixin.GenerateUrl]({
+                        type: 'standard__recordPage',
+                        attributes: {
+                            recordId: record.Id,
+                            objectApiName: 'Case',
+                            actionName: 'view'
+                        }
+                    }).then(url => ({
+                        ...record,
+                        CaseLink: url
+                    }))
+                )
+            ).then(results => {
+                this.cases = results;
+            });
+        } else if (error) {
+            console.error('Error fetching contacts:', error);
         }
     }
 
