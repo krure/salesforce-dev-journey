@@ -4,8 +4,6 @@ description: Instala Node, Java, dependencias npm y Salesforce CLI.
 runs:
   using: composite
   steps:
-    - run: 
-      shell: "ls -l"
     - uses: actions/setup-node@v4
       with:
         node-version: 20
