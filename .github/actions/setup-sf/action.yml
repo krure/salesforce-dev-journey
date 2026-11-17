@@ -15,7 +15,9 @@ runs:
 
     - name: Instalar dependencias npm
       shell: bash
-      run: npm ci
+      run: | 
+        npm install
+        npm ci
 
     - name: Instalar Salesforce CLI
       shell: bash
