@@ -15,13 +15,15 @@ Featuring (MVPs):
       - Basic Apex validations
     - Integrations
       - On case creation or update:
-        - REST call to an external system (mock)}
+        - REST call to an external system (mock)
         - Error handling
         - Basic logging
     - Technical implementations
       - THP (Trigger Handler Pattern)
       - Testing (LWC and Apex test classes)
       - Named credentials
+- Work in progress:
+    - CI/CD Pipeline
 - AI Assistance : 
  This project used AI-assisted tools to support research, prototyping, documentation, and development acceleration.
 Architecture decisions, business logic, integrations, debugging, and final validations were designed and reviewed manually.
