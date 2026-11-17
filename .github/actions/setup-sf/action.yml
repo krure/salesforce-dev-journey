@@ -4,7 +4,7 @@ description: Instala Node, Java, dependencias npm y Salesforce CLI.
 runs:
   using: composite
   steps:
-    - run: 
+    - run:
       shell: "ls -l"
     - uses: actions/setup-node@v4
       with:
@@ -13,7 +13,7 @@ runs:
     - uses: actions/setup-java@v4
       with:
         distribution: temurin
-        java-version: '17'
+        java-version: "17"
 
     - name: Instalar dependencias npm
       shell: bash

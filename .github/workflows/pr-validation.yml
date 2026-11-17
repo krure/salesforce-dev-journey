@@ -72,7 +72,7 @@ jobs:
           jwt-key: ${{ secrets.SF_JWT_KEY }}
           instance-url: ${{ vars.SF_INSTANCE_URL || 'https://login.salesforce.com' }}
           alias: devhub
-          set-default-dev-hub: 'true'
+          set-default-dev-hub: "true"
 
       - name: Crear scratch org (1 día de vida)
         run: |

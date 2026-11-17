@@ -1,9 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Error_Type__c</fullName>
     <label>Error Type</label>
-    <description>Categorizes the type of error for filtering and reporting purposes</description>
-    <inlineHelpText>Select the category that best describes this error: Integration (external callout), DML (database operation), Callout (HTTP request), Validation (business rule), System (platform), Batch (async job), or Other</inlineHelpText>
+    <description
+  >Categorizes the type of error for filtering and reporting purposes</description>
+    <inlineHelpText
+  >Select the category that best describes this error: Integration (external callout), DML (database operation), Callout (HTTP request), Validation (business rule), System (platform), Batch (async job), or Other</inlineHelpText>
     <type>Picklist</type>
     <required>false</required>
     <valueSet>

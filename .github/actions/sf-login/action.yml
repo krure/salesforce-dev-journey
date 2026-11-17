@@ -20,7 +20,7 @@ inputs:
   set-default-dev-hub:
     description: Marcar esta org como Dev Hub por defecto
     required: false
-    default: 'false'
+    default: "false"
 
 runs:
   using: composite

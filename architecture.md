@@ -1,73 +1,85 @@
 #View in Code form
 
 +-------------------+
-|   External User   |
+| External User |
 | (Customer/Partner)|
 +---------+---------+
-          |
-          | Login / Interaction
-          v
+|
+| Login / Interaction
+v
 +-------------------+
-| Experience Cloud  |
-|     Portal        |
+| Experience Cloud |
+| Portal |
 +---------+---------+
-          |
-          | Create / View Case
-          v
+|
+| Create / View Case
+v
 +-------------------+
-|   LWC Components  |
-|-------------------|
-| - Client-side     |
-|   validation      |
-| - UI interaction |
-+---------+---------+
+
+| LWC Components        |
+| --------------------- |
+| - Client-side         |
+| validation            |
+| - UI interaction      |
+| +---------+---------+ |
+
           |
           | Apex Method Call
           v
+
 +---------------------------+
-|     Apex Controller       |
-|---------------------------|
-| - Server-side validation  |
-| - Business rules          |
-+-------------+-------------+
+
+| Apex Controller               |
+| ----------------------------- |
+| - Server-side validation      |
+| - Business rules              |
+| +-------------+-------------+ |
+
               |
               | DML (Insert/Update)
               v
+
 +---------------------------+
-|       Case Trigger        |
+| Case Trigger |
 +-------------+-------------+
-              |
-              | Delegate logic
-              v
+|
+| Delegate logic
+v
 +---------------------------+
-|    Trigger Handler        |
+| Trigger Handler |
 +-------------+-------------+
-              |
-              | Invoke integration logic
-              v
+|
+| Invoke integration logic
+v
 +---------------------------+
-|   Integration Service     |
-|---------------------------|
-| - REST Callout            |
-| - Error handling          |
-| - Response parsing        |
-+-------------+-------------+
+
+| Integration Service           |
+| ----------------------------- |
+| - REST Callout                |
+| - Error handling              |
+| - Response parsing            |
+| +-------------+-------------+ |
+
               |
               | Named Credential
               v
+
 +---------------------------+
-|   External System (PoC)   |
-|---------------------------|
-| - Receives Case data      |
-| - Returns status / ID     |
-+-------------+-------------+
+
+| External System (PoC)         |
+| ----------------------------- |
+| - Receives Case data          |
+| - Returns status / ID         |
+| +-------------+-------------+ |
+
               |
               | Response
               v
-+---------------------------+
-| Integration_Log__c        |
-|---------------------------|
-| - Request / Response      |
-| - Status / Timestamp      |
+
 +---------------------------+
 
+| Integration_Log__c            |
+| ----------------------------- |
+| - Request / Response          |
+| - Status / Timestamp          |
+| +---------------------------+ |

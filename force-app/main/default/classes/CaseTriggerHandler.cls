@@ -7,45 +7,40 @@
  * @Author:Krure
  */
 
-
 public class CaseTriggerHandler {
+  public static void beforeInsert(List<Case> newCases) {
+    CaseService.validateCases(newCases);
+  }
 
-  
-    public static void beforeInsert(List<Case> newCases) {
-        CaseService.validateCases(newCases);
+  public static void beforeUpdate(List<Case> newCases, Map<Id, Case> oldMap) {
+    CaseService.validateStatusChange(newCases, oldMap);
+  }
+
+  public static void afterInsert(List<Case> newCases) {
+    List<Id> caseIdsToSync = new List<Id>();
+
+    for (Case c : newCases) {
+      if (c.Integration_Status__c == 'Pending') {
+        caseIdsToSync.add(c.Id);
+      }
     }
 
-    public static void beforeUpdate(List<Case> newCases, Map<Id, Case> oldMap) {
-        CaseService.validateStatusChange(newCases, oldMap);
+    if (!caseIdsToSync.isEmpty()) {
+      System.enqueueJob(new CaseIntegrationQueueable(caseIdsToSync));
+    }
+  }
+
+  public static void afterUpdate(List<Case> newCases, Map<Id, Case> oldMap) {
+    List<Id> caseIdsToSync = new List<Id>();
+
+    for (Case c : newCases) {
+      if (c.Integration_Status__c == 'Pending') {
+        caseIdsToSync.add(c.Id);
+      }
     }
 
-   public static void afterInsert(List<Case> newCases) {
-
-        List<Id> caseIdsToSync = new List<Id>();
-
-        for(Case c : newCases) {
-            if(c.Integration_Status__c == 'Pending') {
-                caseIdsToSync.add(c.Id);
-            }
-        }
-
-        if(!caseIdsToSync.isEmpty()) {
-            System.enqueueJob(new CaseIntegrationQueueable(caseIdsToSync));
-        }
-}
-
-
-    public static void afterUpdate(List<Case> newCases, Map<Id, Case> oldMap) {
-      List<Id> caseIdsToSync = new List<Id>();
-
-        for(Case c : newCases) {
-            if(c.Integration_Status__c == 'Pending') {
-               caseIdsToSync.add(c.Id);
-            }
-        }
-
-        if(!caseIdsToSync.isEmpty()) {
-         System.enqueueJob(new CaseIntegrationQueueable(caseIdsToSync));
-        }
+    if (!caseIdsToSync.isEmpty()) {
+      System.enqueueJob(new CaseIntegrationQueueable(caseIdsToSync));
     }
+  }
 }
