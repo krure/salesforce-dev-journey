@@ -1,23 +1,21 @@
 @isTest
 private class CaseIntegrationQueueableTest {
+  @isTest
+  static void testQueueableIntegration() {
+    Test.setMock(HttpCalloutMock.class, new CaseIntegrationMock());
 
-    @isTest
-    static void testQueueableIntegration() {
+    Case c = new Case(
+      Subject = 'Test Case',
+      Status = 'New',
+      Priority = 'Medium'
+    );
 
-        Test.setMock(HttpCalloutMock.class, new CaseIntegrationMock());
+    insert c;
 
-        Case c = new Case(
-            Subject = 'Test Case',
-            Status = 'New',
-            Priority = 'Medium'
-        );
+    Test.startTest();
+    System.enqueueJob(new CaseIntegrationQueueable(new List<Id>{ c.Id }));
+    Test.stopTest();
 
-        insert c;
-
-        Test.startTest();
-        System.enqueueJob(new CaseIntegrationQueueable(new List<Id>{c.Id}));
-        Test.stopTest();
-
-        System.assert(true, 'Queueable executed successfully');
-    }
+    System.assert(true, 'Queueable executed successfully');
+  }
 }
